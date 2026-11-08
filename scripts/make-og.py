@@ -1,10 +1,11 @@
-# Generates public/og-image.png (1200x630). Re-run after changing the business name:
-#   python3 scripts/make-og.py "laptoprescue.shop"
+# Generates public/og-image.png (1200x630) from brand/logo-full.png.
+# Re-run after changing the business name:  python3 scripts/make-og.py "business name"
 import sys
 from PIL import Image, ImageDraw, ImageFont
 name = sys.argv[1] if len(sys.argv) > 1 else "laptoprescue.shop"
 W, H = 1200, 630
-img = Image.new("RGB", (W, H), "#172B3D")
+CHAR, TAN, BG = (71, 70, 66), (195, 170, 131), (245, 243, 239)
+img = Image.new("RGB", (W, H), BG)
 d = ImageDraw.Draw(img)
 def font(size, bold=True):
     for p in ("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if bold else "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
@@ -12,12 +13,15 @@ def font(size, bold=True):
         try: return ImageFont.truetype(p, size)
         except OSError: pass
     return ImageFont.load_default()
-d.rounded_rectangle((80, 80, 152, 152), 20, fill="#B7F36B")
-d.line([(100, 118), (114, 132), (136, 100)], fill="#172B3D", width=9, joint="curve")
-d.text((172, 96), name, font=font(40), fill="#FFFFFF")
-d.text((80, 230), "Computer Repair", font=font(86), fill="#FFFFFF")
-d.text((80, 332), "Without the Hassle.", font=font(86), fill="#B7F36B")
-d.text((80, 470), "Laptop & MacBook repair in London, Ontario", font=font(36, False), fill="#CBD5E1")
-d.text((80, 520), "Free pickup & delivery  •  $29.99 diagnostics", font=font(30, False), fill="#CBD5E1")
+logo = Image.open("brand/logo-full.png").convert("RGBA")
+lw = 380; lh = round(logo.height * lw / logo.width)
+logo = logo.resize((lw, lh), Image.LANCZOS)
+img.paste(logo, (90, (H - lh) // 2), logo)
+x = 520
+d.rectangle((x, 205, x + 90, 211), fill=TAN)
+d.text((x, 240), name, font=font(60), fill=CHAR)
+d.text((x, 332), "Laptop & MacBook repair", font=font(40, False), fill=CHAR)
+d.text((x, 392), "London, Ontario", font=font(40, False), fill=CHAR)
+d.text((x, 470), "Free pickup & delivery  \u2022  $29.99 diagnostics", font=font(26, False), fill=(110, 108, 100))
 img.save("public/og-image.png", optimize=True)
 print("wrote public/og-image.png")
