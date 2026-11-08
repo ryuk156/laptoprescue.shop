@@ -1,7 +1,7 @@
 # London Computer Repair — website
 
 Static Astro site (plain CSS, ~2 KB of vanilla JS) for an appointment-based laptop and MacBook repair
-business in London, Ontario. Hosted on Cloudflare Pages; the repair request form runs as a Pages Function.
+business in London, Ontario. Hosted on Cloudflare (Workers); the repair request form runs in the same Worker.
 
 ## Quick start
 
@@ -43,19 +43,25 @@ All business details, prices, policies and FAQs live in **`src/config/site.ts`**
 Not included, deliberately: street address, opening hours, reviews/ratings, testimonials, credentials,
 years of experience, delivery schedule. Add them only when true.
 
-## 2. Deploy to Cloudflare Pages
+## 2. Deploy to Cloudflare (Workers)
 
-1. Push this folder to a GitHub/GitLab repository.
-2. Cloudflare dashboard → **Workers & Pages → Create → Pages → Connect to Git** and select the repo.
-3. Build settings:
-   - **Framework preset:** Astro
+The repo deploys as a Cloudflare Worker that serves the static site and runs the booking form endpoint
+(`worker/index.ts`, configured in `wrangler.toml`).
+
+1. Cloudflare dashboard → **Workers & Pages → Create → Import a repository** and select the repo.
+2. Settings (the defaults work):
+   - **Root directory:** `/`
    - **Build command:** `npm run build`
-   - **Build output directory:** `dist`
+   - **Deploy command:** `npx wrangler deploy`
    - **Environment variable:** `NODE_VERSION` = `22`
-4. Add the form environment variables (below) under **Settings → Variables and Secrets** for *Production*.
-5. Deploy. `/functions/api/repair-request.ts` is detected automatically and served at `/api/repair-request`.
+3. The project name must match `name` in `wrangler.toml` (`laptoprescue-shop`). If your project has a different name, change `name` there.
+4. Add the form variables (below) under **Settings → Variables and Secrets**, then redeploy.
 
-CLI alternative: `npm run build && npx wrangler pages deploy dist`.
+CLI alternative: `npm run build && npx wrangler deploy`.
+
+Using Cloudflare **Pages** instead? The same form code also runs as a Pages Function (`functions/api/repair-request.ts`):
+create a Pages project, build command `npm run build`, output directory `dist`, and use a `wrangler.toml` that has
+`pages_build_output_dir = "./dist"` instead of the Worker settings.
 
 ### Environment variables (form)
 
@@ -110,7 +116,8 @@ src/layouts/BaseLayout    ← <head>, SEO tags, JSON-LD
 src/components/           ← Header, Footer, BookingForm, Faq, Icon, Breadcrumbs, CtaBand, PickupBanner
 src/pages/                ← 8 pages + 404 + sitemap.xml.ts + robots.txt.ts
 src/styles/global.css     ← all CSS (system fonts, no external requests)
-functions/api/            ← repair-request.ts (Cloudflare Pages Function)
+worker/index.ts           ← Worker entry (serves dist/, routes /api/repair-request)
+functions/api/            ← repair-request.ts (form handler, also usable as a Pages Function)
 public/                   ← _headers, _redirects, favicon, og-image.png
 scripts/                  ← verify-build.mjs, test-form.mjs, make-og.py
 ```

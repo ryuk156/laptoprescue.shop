@@ -1,6 +1,14 @@
-name = "london-computer-repair"
-pages_build_output_dir = "./dist"
+# Cloudflare Workers deployment (Workers Builds: build `npm run build`, deploy `npx wrangler deploy`).
+# The worker name must match the project name in the Cloudflare dashboard.
+name = "laptoprescue-shop"
+main = "worker/index.ts"
 compatibility_date = "2026-11-01"
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "404-page"   # serves dist/404.html for unknown URLs
+run_worker_first = ["/api/*"]     # only the form endpoint runs the Worker; everything else is static
 
 # Optional, durable rate limiting for the form. Create the namespace once:
 #   npx wrangler kv namespace create RATE_LIMIT
