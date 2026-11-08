@@ -1,0 +1,195 @@
+---
+import { repairById, money, LABOUR_PRICE } from '../config/site';
+import Icon from './Icon.astro';
+
+// Interactive 3D laptop, built with CSS 3D transforms only (no JavaScript, no library).
+// Radio buttons choose the part; with nothing chosen the laptop runs an automatic tour.
+const parts = [
+  { id: 'screen', label: 'Screen', repair: 'screen', href: '/laptop-repair-london#screen-replacement', text: 'Cracked glass, lines or a dim picture. We fit a matching panel and test it before it comes back.' },
+  { id: 'keyboard', label: 'Keyboard', repair: 'keyboard', href: '/laptop-repair-london#keyboard-replacement', text: 'Sticky, missing or spill-damaged keys replaced with a compatible keyboard.' },
+  { id: 'battery', label: 'Battery', repair: 'battery', href: '/laptop-repair-london#battery-replacement', text: 'For laptops that die away from the charger.' },
+  { id: 'ssd', label: 'SSD', repair: 'ssd', href: '/laptop-repair-london#ssd-upgrades', text: 'Swap a slow hard drive for a solid-state drive for faster start-up and loading.' },
+  { id: 'ram', label: 'RAM', repair: 'ram', href: '/laptop-repair-london#ram-upgrades', text: 'More memory for smoother multitasking, where your model supports it.' },
+  { id: 'fan', label: 'Cooling fan', repair: 'cleaning', href: '/laptop-repair-london#internal-cleaning', text: 'Dust clears from fans and vents. Hot, loud laptops run cooler and quieter.' },
+];
+---
+<div class="lx">
+  <input class="lx-radio" type="radio" name="lx-part" id="lx-tour" checked />
+  {parts.map((p) => <input class="lx-radio" type="radio" name="lx-part" id={`lx-${p.id}`} />)}
+
+  <div class="lx-head">
+    <p class="eyebrow">Inside your laptop</p>
+    <h2 id="inside-title">See what we can fix or upgrade</h2>
+    <p>Pick a part to look closer. Labour starts at {money(LABOUR_PRICE)} per repair. Parts are extra.</p>
+  </div>
+
+  <div class="lx-stage" aria-hidden="true">
+    <div class="lap">
+      <div class="lx-p lx-base"></div>
+      <div class="lx-p lx-battery"><span>Battery</span></div>
+      <div class="lx-p lx-plate"></div>
+      <div class="lx-p lx-ssd"><span>SSD</span></div>
+      <div class="lx-p lx-ram lx-ram-1"><span>RAM</span></div>
+      <div class="lx-p lx-ram lx-ram-2"></div>
+      <div class="lx-p lx-fan"><div class="lx-blades"></div></div>
+      <div class="lx-p lx-keyboard">
+        <div class="lx-keys"></div>
+        <div class="lx-pad"></div>
+      </div>
+      <div class="lx-lid">
+        <div class="lx-p lx-screen lx-lid-out"><i></i></div>
+        <div class="lx-p lx-screen lx-lid-in"><div class="lx-display"><b></b><b></b><b></b></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lx-controls">
+    <div class="lx-pills" role="group" aria-label="Choose a laptop part">
+      <label for="lx-tour" class="lx-pill">Auto tour</label>
+      {parts.map((p) => <label for={`lx-${p.id}`} class="lx-pill">{p.label}</label>)}
+    </div>
+
+    <div class="lx-infos" aria-live="polite">
+      <div class="lx-info lx-info-tour">
+        <h3>Watch it open up</h3>
+        <p>The laptop opens and separates into its main parts. Choose one above to hold it still and see what we do with it.</p>
+      </div>
+      {parts.map((p) => {
+        const r = repairById(p.repair);
+        return (
+          <div class={`lx-info lx-info-${p.id}`}>
+            <h3>{p.label}</h3>
+            <p>{p.text}</p>
+            <p class="lx-info-foot">
+              <strong>{money(r.price)} labour</strong>
+              <a class="link-arrow" href={p.href}>Learn more<span class="sr-only"> about {p.label.toLowerCase()} repair</span> <Icon name="arrow" size={18} /></a>
+            </p>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  @property --e { syntax: '<number>'; inherits: true; initial-value: 0; }
+  @property --o { syntax: '<number>'; inherits: true; initial-value: 0; }
+
+  .lx { display: grid; gap: 1.75rem; grid-template-areas: 'head' 'stage' 'controls'; position: relative; }
+  .lx-head { grid-area: head; max-width: 34rem; }
+  .lx-head p:last-child { color: #cbd5e1; }
+  .lx-stage { grid-area: stage; }
+  .lx-controls { grid-area: controls; min-width: 0; }
+  @media (min-width: 900px) {
+    .lx { grid-template-columns: 0.85fr 1.15fr; grid-template-areas: 'head stage' 'controls stage'; align-items: start; column-gap: 3rem; }
+  }
+
+  /* radio controls (visually hidden, still keyboard focusable) */
+  .lx-radio { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+  .lx-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem; }
+  .lx-pill { cursor: pointer; padding: 0.55rem 1rem; min-height: 44px; display: inline-flex; align-items: center; border-radius: 999px; border: 1.5px solid rgba(255, 255, 255, 0.45); color: #fff; font-weight: 600; font-size: 0.95rem; transition: background-color 0.15s, color 0.15s, border-color 0.15s; }
+  .lx-pill:hover { border-color: var(--accent); }
+  .lx:has(#lx-tour:focus-visible) label[for='lx-tour'],
+  .lx:has(#lx-screen:focus-visible) label[for='lx-screen'],
+  .lx:has(#lx-keyboard:focus-visible) label[for='lx-keyboard'],
+  .lx:has(#lx-battery:focus-visible) label[for='lx-battery'],
+  .lx:has(#lx-ssd:focus-visible) label[for='lx-ssd'],
+  .lx:has(#lx-ram:focus-visible) label[for='lx-ram'],
+  .lx:has(#lx-fan:focus-visible) label[for='lx-fan'] { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .lx:has(#lx-tour:checked) label[for='lx-tour'],
+  .lx:has(#lx-screen:checked) label[for='lx-screen'],
+  .lx:has(#lx-keyboard:checked) label[for='lx-keyboard'],
+  .lx:has(#lx-battery:checked) label[for='lx-battery'],
+  .lx:has(#lx-ssd:checked) label[for='lx-ssd'],
+  .lx:has(#lx-ram:checked) label[for='lx-ram'],
+  .lx:has(#lx-fan:checked) label[for='lx-fan'] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+
+  .lx-info { margin-bottom: 1rem; max-width: 30rem; }
+  .lx-info h3 { color: #fff; margin-bottom: 0.3em; }
+  .lx-info p { color: #cbd5e1; margin-bottom: 0.6em; }
+  .lx-info-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.25rem; }
+  .lx-info-foot strong { color: var(--accent); }
+  .lx-info .link-arrow { color: #fff; }
+  @supports selector(:has(a)) {
+    .lx-info { display: none; }
+    .lx:has(#lx-tour:checked) .lx-info-tour,
+    .lx:has(#lx-screen:checked) .lx-info-screen,
+    .lx:has(#lx-keyboard:checked) .lx-info-keyboard,
+    .lx:has(#lx-battery:checked) .lx-info-battery,
+    .lx:has(#lx-ssd:checked) .lx-info-ssd,
+    .lx:has(#lx-ram:checked) .lx-info-ram,
+    .lx:has(#lx-fan:checked) .lx-info-fan { display: block; }
+  }
+
+  /* ---------- 3D stage. Sizes are in em so everything scales with --u ---------- */
+  .lx-stage { --u: clamp(6px, 1.72vw, 11px); font-size: var(--u); height: 62em; display: grid; place-items: center; perspective: 150em; --e: 0; --o: 0; animation: lx-tour 18s ease-in-out infinite; overflow: hidden; }
+  .lap { position: relative; width: 32em; height: 21em; transform-style: preserve-3d; transform: translateY(calc(var(--o) * 3em)) rotateX(58deg) rotateZ(-34deg) translateZ(calc(var(--o) * -8em + var(--e) * -14em)); }
+  .lx-p, .lx-lid { position: absolute; transform-style: preserve-3d; }
+  .lx-p { transition: opacity 0.35s, box-shadow 0.35s; border-radius: 0.8em; font-size: 1em; }
+  .lx-lid { inset: 0; transform-origin: 50% 0; transform: translateZ(calc((1.5 + var(--e) * 30) * 1em)) rotateX(calc(var(--o) * 104deg)); }
+  .lx-p span { position: absolute; inset: 0; display: grid; place-items: center; font-size: 0.9em; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #172b3d; }
+
+  .lx-base { inset: 0; background: #5b7690; transform: translateZ(0); box-shadow: 0 0 0 0.15em #2d4358 inset; }
+  .lx-battery { left: 2em; top: 11.5em; width: 28em; height: 7.5em; background: #d5dde6; background-image: linear-gradient(90deg, #aebccb 0.2em, transparent 0); background-size: 4em 100%; transform: translateZ(calc((0.3 + var(--e) * 5) * 1em)); }
+  .lx-plate { left: 2em; top: 1.5em; width: 28em; height: 9.5em; background: #29415a; background-image: linear-gradient(90deg, rgba(183, 243, 107, 0.5) 0.12em, transparent 0), linear-gradient(rgba(183, 243, 107, 0.35) 0.12em, transparent 0); background-size: 2.2em 2.2em; transform: translateZ(calc((0.6 + var(--e) * 9) * 1em)); }
+  .lx-ssd { left: 4em; top: 3em; width: 9em; height: 3.2em; background: #e7ecf1; border-radius: 0.4em; transform: translateZ(calc((0.9 + var(--e) * 14) * 1em)); }
+  .lx-ram { left: 15em; width: 8em; height: 1.7em; background: #b7f36b; border-radius: 0.3em; transform: translateZ(calc((0.9 + var(--e) * 14) * 1em)); }
+  .lx-ram-1 { top: 3em; }
+  .lx-ram-2 { top: 5.6em; }
+  .lx-ram span { color: #172b3d; font-size: 0.7em; }
+  .lx-fan { left: 24.5em; top: 3em; width: 4.8em; height: 4.8em; border-radius: 50%; background: #e7ecf1; transform: translateZ(calc((0.9 + var(--e) * 14) * 1em)); display: grid; place-items: center; }
+  .lx-blades { width: 78%; height: 78%; border-radius: 50%; background: repeating-conic-gradient(#172b3d 0 22deg, #8aa0b6 22deg 60deg); animation: lx-spin 1.6s linear infinite; }
+  .lx-keyboard { inset: 0; background: #3f586f; transform: translateZ(calc((1.2 + var(--e) * 27) * 1em)); border-radius: 1em; box-shadow: 0 0 0 0.15em #2d4358 inset; }
+  .lx-keys { position: absolute; left: 2.2em; top: 1.5em; width: 27.6em; height: 9.5em; background-color: #d9e0e8; background-image: linear-gradient(90deg, #3f586f 0.3em, transparent 0), linear-gradient(#3f586f 0.3em, transparent 0); background-size: 1.9em 1.9em; border-radius: 0.4em; }
+  .lx-pad { position: absolute; left: 11.5em; top: 13em; width: 9em; height: 6em; background: #5b7690; border-radius: 0.6em; box-shadow: 0 0 0 0.15em #2d4358 inset; }
+  .lx-lid-out, .lx-lid-in { inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 1em; }
+  .lx-lid-out { background: #8aa0b6; box-shadow: 0 0 0 0.15em #5b7690 inset; display: grid; place-items: center; }
+  .lx-lid-out i { width: 3.2em; height: 3.2em; border-radius: 50%; background: var(--accent); }
+  .lx-lid-in { transform: rotateY(180deg); background: #1b2b3a; padding: 1.2em; }
+  .lx-display { width: 100%; height: 100%; border-radius: 0.5em; background: linear-gradient(135deg, #1e4a5c, #153042); display: grid; align-content: center; gap: 1em; padding: 0 3em; }
+  .lx-display b { height: 1.1em; border-radius: 0.55em; background: rgba(183, 243, 107, 0.7); }
+  .lx-display b:nth-child(2) { width: 70%; opacity: 0.55; }
+  .lx-display b:nth-child(3) { width: 45%; opacity: 0.35; }
+
+  /* automatic tour */
+  @keyframes lx-tour {
+    0%, 6% { --o: 0; --e: 0; }
+    20% { --o: 1; --e: 0; }
+    34%, 80% { --o: 1; --e: 1; }
+    90% { --o: 1; --e: 0; }
+    98%, 100% { --o: 0; --e: 0; }
+  }
+  @keyframes lx-spin { to { transform: rotate(360deg); } }
+  @keyframes lx-glow {
+    0%, 8% { box-shadow: 0 0 0 0 rgba(183, 243, 107, 0); }
+    10%, 15% { box-shadow: 0 0 0 0.35em #b7f36b, 0 0 2.5em rgba(183, 243, 107, 0.6); }
+    18%, 100% { box-shadow: 0 0 0 0 rgba(183, 243, 107, 0); }
+  }
+  .lx:has(#lx-tour:checked) .lx-screen { animation: lx-glow 18s linear infinite 6.2s; }
+  .lx:has(#lx-tour:checked) .lx-keyboard { animation: lx-glow 18s linear infinite 7.5s; }
+  .lx:has(#lx-tour:checked) .lx-battery { animation: lx-glow 18s linear infinite 8.8s; }
+  .lx:has(#lx-tour:checked) .lx-ssd { animation: lx-glow 18s linear infinite 10.1s; }
+  .lx:has(#lx-tour:checked) .lx-ram { animation: lx-glow 18s linear infinite 11.4s; }
+  .lx:has(#lx-tour:checked) .lx-fan { animation: lx-glow 18s linear infinite 12.7s; }
+
+  /* a chosen part holds the laptop open and apart, dims the rest and outlines the part */
+  .lx:has(.lx-radio:not(#lx-tour):checked) .lx-stage { animation: none; --e: 1; --o: 1; transition: --e 0.9s ease, --o 0.9s ease; }
+  .lx:has(#lx-screen:checked) .lx-p:not(.lx-screen),
+  .lx:has(#lx-keyboard:checked) .lx-p:not(.lx-keyboard),
+  .lx:has(#lx-battery:checked) .lx-p:not(.lx-battery),
+  .lx:has(#lx-ssd:checked) .lx-p:not(.lx-ssd),
+  .lx:has(#lx-ram:checked) .lx-p:not(.lx-ram),
+  .lx:has(#lx-fan:checked) .lx-p:not(.lx-fan) { opacity: 0.18; }
+  .lx:has(#lx-screen:checked) .lx-screen,
+  .lx:has(#lx-keyboard:checked) .lx-keyboard,
+  .lx:has(#lx-battery:checked) .lx-battery,
+  .lx:has(#lx-ssd:checked) .lx-ssd,
+  .lx:has(#lx-ram:checked) .lx-ram,
+  .lx:has(#lx-fan:checked) .lx-fan { box-shadow: 0 0 0 0.35em #b7f36b, 0 0 2.5em rgba(183, 243, 107, 0.6); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lx-stage { animation: none; --e: 1; --o: 1; }
+    .lx-blades { animation: none; }
+    .lx .lx-p { animation: none !important; }
+  }
+</style>

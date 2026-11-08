@@ -1,0 +1,194 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import Faq from '../components/Faq.astro';
+import CtaBand from '../components/CtaBand.astro';
+import LaptopDemo from '../components/LaptopDemo.astro';
+import {
+  business, serviceCards, repairById, money, faqs, standardDiagnostic, LABOUR_PRICE, MACBOOK_BATTERY_PRICE, MACBOOK_OTHER_PRICE, serviceArea, BOOK_HREF,
+} from '../config/site';
+
+const faqSchema = {
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+};
+
+const steps = [
+  { t: 'Book a Repair', d: 'Send the repair request form with your device details and a preferred pickup date and time.' },
+  { t: 'Free Local Pickup', d: 'We collect your device from you within the service area, at no charge.' },
+  { t: 'Diagnosis and Customer Approval', d: 'We diagnose the problem and send a quotation. Nothing is repaired until you approve it.' },
+  { t: 'Repair and Free Return Delivery', d: 'After repair and testing, your device is returned to you free of charge.' },
+];
+
+const benefits = [
+  { t: 'Convenient pickup and drop-off', d: `Free within our London service area, currently up to ${serviceArea.radiusKm} km.` },
+  { t: 'Transparent quotations', d: 'Labour and parts are itemized before you decide.' },
+  { t: 'Affordable labour', d: 'Clear, published labour prices for the most common repairs.' },
+  { t: 'Customer authorization before repair', d: 'No work starts and no extra charges appear without your approval.' },
+  { t: 'Testing before delivery', d: 'We test the repaired device before it comes back to you.' },
+];
+---
+<BaseLayout
+  title={`Computer Repair London Ontario | Free Pickup | ${business.name}`}
+  description={`Laptop and MacBook repair in London, Ontario with free pickup and return delivery. ${money(standardDiagnostic.price)} diagnostics and labour from ${money(LABOUR_PRICE)} per repair.`}
+  path="/"
+  includeBusinessSchema
+  jsonLd={[faqSchema]}
+>
+  <!-- B. Hero -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="container hero-grid">
+      <div>
+        <p class="eyebrow">London, Ontario · Laptop &amp; MacBook repair</p>
+        <h1 id="hero-title">Computer Repair Without the <span class="hl">Hassle.</span></h1>
+        <p class="hero-lead">Affordable laptop and MacBook repairs in London, Ontario. Professional service, transparent pricing and convenient free pickup and drop-off.</p>
+        <div class="btn-row">
+          <a class="btn btn-primary btn-lg" href={BOOK_HREF}>Book a Repair</a>
+          <a class="btn btn-ghost btn-lg" href="/pricing">View Pricing</a>
+        </div>
+      </div>
+      <div class="hero-panel">
+        <h2>What you get</h2>
+        <ul class="fact-list">
+          <li>
+            <span class="fact-icon"><Icon name="truck" /></span>
+            <span><strong>Free local pickup and delivery</strong>Within our London service area.</span>
+          </li>
+          <li>
+            <span class="fact-icon"><Icon name="tag" /></span>
+            <span><strong>{money(standardDiagnostic.price)} diagnostics</strong>A flat fee for the standard diagnostic.</span>
+          </li>
+          <li>
+            <span class="fact-icon"><Icon name="shield" /></span>
+            <span><strong>Labour from {money(LABOUR_PRICE)}</strong>Clear labour prices. Parts are extra.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- C. Services -->
+  <section class="section" id="services" aria-labelledby="services-title">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Services</p>
+        <h2 id="services-title">Repairs and upgrades for laptops and MacBooks</h2>
+        <p>Labour price shown for each service. Parts, shipping and taxes are quoted separately.</p>
+      </div>
+      <div class="grid grid-3">
+        {serviceCards.map((s) => {
+          const r = repairById(s.repairId);
+          return (
+            <article class="card">
+              <span class="card-icon"><Icon name={s.icon} /></span>
+              <h3>{s.title}</h3>
+              <p>{s.description}</p>
+              <div class="card-foot">
+                <span class="price-tag"><small>Labour</small>{money(r.price)}</span>
+                <a class="link-arrow" href={s.href}>Learn more<span class="sr-only"> about {s.title}</span> <Icon name="arrow" size={18} /></a>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- MacBook -->
+  <section class="section section-alt" id="macbook" aria-labelledby="mac-title">
+    <div class="container split">
+      <div>
+        <p class="eyebrow">MacBook repair</p>
+        <h2 id="mac-title">MacBook battery replacement and other MacBook repairs</h2>
+        <p class="muted">Short battery life, a swollen battery, a cracked screen or a keyboard that has stopped working. We repair MacBooks and confirm what is possible for your model before you approve anything.</p>
+        <div class="btn-row">
+          <a class="btn btn-primary" href="/macbook-repair-london">MacBook repairs</a>
+          <a class="btn btn-ghost" href={BOOK_HREF}>Book a Repair</a>
+        </div>
+      </div>
+      <div class="grid grid-2">
+        <div class="card">
+          <span class="card-icon"><Icon name="battery" /></span>
+          <h3>MacBook battery replacement</h3>
+          <p>A new battery for a MacBook that no longer lasts or has a battery warning.</p>
+          <div class="card-foot"><span class="price-tag"><small>Labour</small>{money(MACBOOK_BATTERY_PRICE)}</span></div>
+        </div>
+        <div class="card">
+          <span class="card-icon"><Icon name="laptop" /></span>
+          <h3>Other MacBook repairs</h3>
+          <p>Screen, keyboard, cleaning and more, after a diagnostic to find the cause.</p>
+          <div class="card-foot"><span class="price-tag"><small>Labour from</small>{money(MACBOOK_OTHER_PRICE)}</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3D laptop -->
+  <section class="section section-dark" id="inside" aria-labelledby="inside-title">
+    <div class="container">
+      <LaptopDemo />
+    </div>
+  </section>
+
+  <!-- D. How it works -->
+  <section class="section section-alt" id="how-it-works" aria-labelledby="how-title">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">How it works</p>
+        <h2 id="how-title">Four simple steps</h2>
+        <p>You stay in control from request to return.</p>
+      </div>
+      <ol class="steps">
+        {steps.map((s) => <li><h3>{s.t}</h3><p>{s.d}</p></li>)}
+      </ol>
+    </div>
+  </section>
+
+  <!-- E. Pricing highlights -->
+  <section class="section section-dark" id="pricing-highlights" aria-labelledby="pricing-title">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Pricing</p>
+        <h2 id="pricing-title">Clear pricing, no surprises</h2>
+        <p>See every labour price on the <a href="/pricing" style="color:var(--accent)">pricing page</a>.</p>
+      </div>
+      <div class="price-grid">
+        <div class="price-card"><span class="big">{money(standardDiagnostic.price)}</span><h3>Standard diagnostic</h3><p>A flat fee to find out what is wrong.</p></div>
+        <div class="price-card"><span class="big">From {money(LABOUR_PRICE)}</span><h3>Labour per repair</h3><p>Keyboard, screen and motherboard repairs are priced separately.</p></div>
+        <div class="price-card"><span class="big">Parts</span><h3>Quoted separately</h3><p>Every part is itemized on your quotation.</p></div>
+        <div class="price-card"><span class="big">Your OK</span><h3>No work without authorization</h3><p>We only repair what you approve.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- F. Why choose us -->
+  <section class="section" id="why-us" aria-labelledby="why-title">
+    <div class="container split">
+      <div>
+        <p class="eyebrow">Why choose us</p>
+        <h2 id="why-title">Repair that fits around your day</h2>
+        <p class="muted">An independent London, Ontario repair service built around convenience and honesty about cost.</p>
+        <a class="btn btn-primary" href={BOOK_HREF}>Book a Repair</a>
+      </div>
+      <ul class="benefits">
+        {benefits.map((b) => (
+          <li><span class="tick"><Icon name="check" size={18} /></span><span><strong>{b.t}</strong><span class="t">{b.d}</span></span></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- G. FAQ -->
+  <section class="section section-alt" id="faq" aria-labelledby="faq-title">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">FAQ</p>
+        <h2 id="faq-title">Common questions</h2>
+      </div>
+      <Faq items={faqs} />
+    </div>
+  </section>
+
+  <!-- H. Final CTA -->
+  <CtaBand />
+</BaseLayout>

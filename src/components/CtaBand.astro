@@ -1,0 +1,16 @@
+---
+import { BOOK_HREF } from '../config/site';
+interface Props { heading?: string; text?: string; button?: string }
+const {
+  heading = 'Let’s Get Your Computer Working Again.',
+  text = 'Tell us what’s wrong and we’ll collect your device for diagnosis. You approve the quotation before any repair begins.',
+  button = 'Request a Repair',
+} = Astro.props;
+---
+<section class="section section-dark cta-band" aria-labelledby="cta-heading">
+  <div class="container cta-inner">
+    <h2 id="cta-heading">{heading}</h2>
+    <p>{text}</p>
+    <a class="btn btn-accent btn-lg" href={BOOK_HREF}>{button}</a>
+  </div>
+</section>

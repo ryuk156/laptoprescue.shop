@@ -1,0 +1,81 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import PickupBanner from '../components/PickupBanner.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { business, LABOUR_PRICE, MOTHERBOARD_PRICE, repairById, money, standardDiagnostic, BOOK_HREF, policies } from '../config/site';
+
+const crumbs = [{ name: 'Computer Repair London' }];
+const windows = repairById('windows');
+
+const symptoms = [
+  ['Won’t turn on or charge', 'Start with a diagnostic to find the cause. Motherboard issues are ' + money(MOTHERBOARD_PRICE) + ' labour.'],
+  ['Slow to start and open programs', 'Often a storage or memory limit: an SSD or RAM upgrade, or a clean Windows install.'],
+  ['Hot, loud fan or sudden shutdowns', 'Dust build-up or dried thermal paste: internal cleaning and thermal paste replacement.'],
+  ['Cracked screen, dead keys or short battery life', 'Screen, keyboard or battery replacement on a laptop.'],
+  ['Viruses, errors or a Windows that won’t load', 'A fresh Windows installation, with your files moved across if they’re recoverable.'],
+  ['Spilled liquid', 'A liquid damage assessment. Switch the device off and unplug it, and don’t keep trying to power it on.'],
+];
+---
+<BaseLayout
+  title={`Computer Repair in London, Ontario | ${business.name}`}
+  description="Computer repair in London, Ontario for laptops and MacBooks: diagnostics, upgrades and Windows installation, with free local pickup and return delivery."
+  path="/computer-repair-london"
+  breadcrumbs={crumbs}
+>
+  <section class="page-hero">
+    <div class="container">
+      <Breadcrumbs items={crumbs} />
+      <h1>Computer repair in London, Ontario</h1>
+      <p class="lead">One service for laptops and MacBooks: we collect your device, diagnose it, quote the repair and only start once you say yes.</p>
+      <div class="btn-row">
+        <a class="btn btn-primary btn-lg" href={BOOK_HREF}>Book a Repair</a>
+        <a class="btn btn-ghost btn-lg" href="/pricing">View Pricing</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <PickupBanner />
+    </div>
+  </section>
+
+  <section class="section section-alt" aria-labelledby="symptoms-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="symptoms-title">What’s wrong with your computer?</h2>
+        <p>Not sure what you need? Here’s how common problems usually map to a repair. A diagnostic confirms it before you spend on parts or labour.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <caption class="sr-only">Common problems and likely repairs</caption>
+          <thead><tr><th scope="col">Problem</th><th scope="col">Usual next step</th></tr></thead>
+          <tbody>
+            {symptoms.map(([p, s]) => <tr><th scope="row">{p}</th><td>{s}</td></tr>)}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="where-title">
+    <div class="container prose">
+      <h2 id="where-title">Where to go for your device</h2>
+      <p>Pick the page that matches what you have:</p>
+      <ul>
+        <li><a href="/laptop-repair-london">Laptop repair in London, Ontario</a>: keyboards, screens, batteries, SSD and RAM upgrades, and cleaning.</li>
+        <li><a href="/macbook-repair-london">MacBook repair in London, Ontario</a>: battery replacement and other MacBook repairs.</li>
+      </ul>
+
+      <h2 id="windows-installation">Windows installation</h2>
+      <p>A clean Windows install resolves many software problems: corrupted updates, malware clean-ups that didn’t stick, and machines that have slowed over the years. Labour is {money(windows.price)}.</p>
+
+      <h2>How a diagnosis works</h2>
+      <p>The diagnostic is {money(standardDiagnostic.price)}. After it, you get a quotation: labour from {money(LABOUR_PRICE)} per repair (see the pricing page) plus any parts. {policies.turnaround}</p>
+      <p>See the full <a href="/pricing">labour price list</a>, or <a href={BOOK_HREF}>request a repair</a> to get started.</p>
+    </div>
+  </section>
+
+  <CtaBand heading="Ready to book your repair?" text="Send a request and we’ll arrange a pickup time that suits you, subject to availability." button="Book a Repair" />
+</BaseLayout>

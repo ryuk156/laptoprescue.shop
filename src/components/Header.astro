@@ -1,0 +1,55 @@
+---
+import { business, nav, BOOK_HREF } from '../config/site';
+import Icon from './Icon.astro';
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="logo" href="/" aria-label={`${business.name} — home`}>
+      <span class="logo-mark" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 28 28"><rect width="28" height="28" rx="8" fill="#172B3D"/><path d="M8 14.5l4 4 8-9" fill="none" stroke="#B7F36B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="logo-text">{business.name}</span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+      <span class="sr-only">Menu</span>
+      <span class="icon-open"><Icon name="menu" /></span>
+      <span class="icon-close"><Icon name="close" /></span>
+    </button>
+
+    <nav id="site-nav" class="site-nav" aria-label="Main">
+      <ul>
+        {nav.map((item) => (
+          <li><a href={item.href} aria-current={path === item.href ? 'page' : undefined}>{item.label}</a></li>
+        ))}
+      </ul>
+      <a class="btn btn-primary nav-cta" href={BOOK_HREF}>Book a Repair</a>
+    </nav>
+  </div>
+</header>
+<noscript>
+  <style>.nav-toggle{display:none!important}.site-nav{display:flex;width:100%}</style>
+</noscript>
+
+<script>
+  // Progressive enhancement: without JS the nav simply stays visible and wraps.
+  const toggle = document.querySelector<HTMLButtonElement>('.nav-toggle');
+  const nav = document.getElementById('site-nav');
+  if (toggle && nav) {
+    const set = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      nav.classList.toggle('is-open', open);
+    };
+    toggle.addEventListener('click', () => set(toggle.getAttribute('aria-expanded') !== 'true'));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        set(false);
+        toggle.focus();
+      }
+    });
+    nav.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) set(false);
+    });
+  }
+</script>

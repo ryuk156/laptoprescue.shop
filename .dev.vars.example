@@ -1,0 +1,7 @@
+# Copy to .dev.vars for local `wrangler pages dev` testing. Never commit .dev.vars.
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxx
+REPAIR_TO_EMAIL=you@yourdomain.com
+REPAIR_FROM_EMAIL=requests@yourdomain.com
+BUSINESS_NAME=laptoprescue.shop
+# Optional override of in-area postal prefixes:
+# SERVICE_AREA_PREFIXES=N5V,N5W,N6A

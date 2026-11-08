@@ -1,0 +1,110 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { business, repairs, money } from '../config/site';
+
+interface Crumb { name: string; href?: string }
+interface Props {
+  title: string;
+  description: string;
+  /** Path without trailing slash, e.g. "/pricing" ("/" for home). */
+  path: string;
+  noindex?: boolean;
+  breadcrumbs?: Crumb[];
+  /** Extra JSON-LD nodes (e.g. FAQPage). */
+  jsonLd?: Record<string, unknown>[];
+  /** Include the full business + service catalogue node (home page). */
+  includeBusinessSchema?: boolean;
+}
+
+const { title, description, path, noindex = false, breadcrumbs, jsonLd = [], includeBusinessSchema = false } = Astro.props;
+
+const base = business.siteUrl.replace(/\/$/, '');
+const canonical = path === '/' ? `${base}/` : `${base}${path}`;
+const ogImage = `${base}/og-image.png`;
+
+const businessId = `${base}/#business`;
+const businessNode: Record<string, unknown> = {
+  '@type': 'ProfessionalService',
+  '@id': businessId,
+  name: business.name,
+  url: `${base}/`,
+  description: 'Laptop and MacBook repair with free local pickup and return delivery in London, Ontario.',
+  areaServed: {
+    '@type': 'City',
+    name: business.city,
+    containedInPlace: { '@type': 'AdministrativeArea', name: business.region, containedInPlace: { '@type': 'Country', name: business.country } },
+  },
+  ...(business.email ? { email: business.email } : {}),
+  ...(business.phone ? { telephone: business.phone } : {}),
+  ...(business.googleBusinessProfileUrl ? { sameAs: [business.googleBusinessProfileUrl] } : {}),
+  // No street address is published on purpose (appointment-based, pickup service).
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Computer repair services (labour only)',
+    itemListElement: repairs.map((r) => ({
+      '@type': 'Offer',
+      priceCurrency: 'CAD',
+      price: r.price.toFixed(2),
+      description: `${r.name}${r.from ? ' (starting price)' : ''}. Labour only; parts, shipping and taxes are additional.`,
+      itemOffered: { '@type': 'Service', name: r.name, provider: { '@id': businessId }, areaServed: business.city + ', ' + business.region },
+    })),
+  },
+};
+
+const graph: Record<string, unknown>[] = [];
+if (includeBusinessSchema) {
+  graph.push(businessNode);
+  graph.push({ '@type': 'WebSite', '@id': `${base}/#website`, url: `${base}/`, name: business.name, publisher: { '@id': businessId } });
+}
+if (breadcrumbs && breadcrumbs.length) {
+  graph.push({
+    '@type': 'BreadcrumbList',
+    itemListElement: [{ name: 'Home', href: '/' }, ...breadcrumbs].map((c, i, arr) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: c.name,
+      item: i === arr.length - 1 ? canonical : `${base}${c.href === '/' ? '/' : c.href}`,
+    })),
+  });
+}
+graph.push(...jsonLd);
+const jsonLdString = graph.length ? JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }) : '';
+---
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'} />
+    <meta name="theme-color" content="#172B3D" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    {business.googleSearchConsoleToken && <meta name="google-site-verification" content={business.googleSearchConsoleToken} />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={business.name} />
+    <meta property="og:locale" content="en_CA" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${business.name} — computer repair in London, Ontario`} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    {jsonLdString && <script type="application/ld+json" set:html={jsonLdString} />}
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <Header />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "name": "london-computer-repair-site",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test:site": "node scripts/verify-build.mjs"
+  },
+  "dependencies": {
+    "astro": "^7.4.7"
+  },
+  "devDependencies": {
+    "@astrojs/check": "latest",
+    "typescript": "^5.6.0"
+  }
+}

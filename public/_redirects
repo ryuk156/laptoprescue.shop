@@ -1,0 +1,15 @@
+# Cloudflare Pages redirects. Format: source destination [status]
+# Keep one canonical URL per page (no .html, no trailing slash).
+
+/index.html                  /                         301
+/home                        /                         301
+/services                    /computer-repair-london   301
+/computer-repair             /computer-repair-london   301
+/laptop-repair               /laptop-repair-london     301
+/book                        /contact                  301
+/book-a-repair               /contact                  301
+/privacy                     /privacy-policy           301
+
+# Once the custom domain is live, redirect the *.pages.dev address to it so search engines only
+# see one site. Replace the domain, then uncomment:
+# https://YOUR-PROJECT.pages.dev/*  https://www.example.com/:splat  301

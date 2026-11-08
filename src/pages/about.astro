@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Icon from '../components/Icon.astro';
+import { business, serviceArea, BOOK_HREF } from '../config/site';
+
+const crumbs = [{ name: 'About' }];
+const principles = [
+  { icon: 'truck', t: 'We come to you', d: `Free pickup and return delivery inside our London service area (currently up to ${serviceArea.radiusKm} km), so repair doesn’t mean a trip across town.` },
+  { icon: 'tag', t: 'Prices you can read', d: 'Labour prices are published and parts are itemized on your quotation. If something changes, we ask before we act.' },
+  { icon: 'shield', t: 'You approve every repair', d: 'We diagnose, quote and wait for your go-ahead. Nothing is repaired or charged beyond what you’ve approved.' },
+  { icon: 'check', t: 'Tested before it’s returned', d: 'Your device is tested after repair, and only returned once it’s working as it should.' },
+];
+---
+<BaseLayout
+  title={`About ${business.name} | London, Ontario Computer Repair`}
+  description={`${business.name} is an independent, appointment-based laptop and MacBook repair service in London, Ontario with free pickup, clear pricing and customer approval.`}
+  path="/about"
+  breadcrumbs={crumbs}
+>
+  <section class="page-hero">
+    <div class="container">
+      <Breadcrumbs items={crumbs} />
+      <h1>An independent repair service for London</h1>
+      <p class="lead">We started with a simple idea: getting a computer fixed shouldn’t mean losing a day or guessing at the bill.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container split">
+      <div class="prose">
+        <h2>How we work</h2>
+        <p>{business.name} is a small, independent laptop and MacBook repair service in {business.city}, {business.region}. We work by appointment: you tell us what’s wrong through the website, we collect your device, and we come back to you with a diagnosis and a quotation.</p>
+        <p>Because we’re appointment-based and come to you, you don’t have to find parking, queue at a counter or leave your computer with a stranger for an open-ended wait. You decide whether to go ahead after you’ve seen the price.</p>
+        <p>We don’t publish a shopfront address. Everything starts with the <a href={BOOK_HREF}>repair request form</a>.</p>
+      </div>
+      <ul class="benefits">
+        {principles.map((p) => (
+          <li><span class="tick"><Icon name={p.icon} size={18} /></span><span><strong>{p.t}</strong><span class="t">{p.d}</span></span></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container prose">
+      <h2>What we’ll never do</h2>
+      <ul>
+        <li>Start a repair you haven’t approved.</li>
+        <li>Add charges that weren’t on your quotation.</li>
+        <li>Ask for your account passwords to book a repair.</li>
+        <li>Promise pickup outside our service area.</li>
+      </ul>
+      <p>Questions about how it works? Read the <a href="/#faq">frequently asked questions</a> or see the <a href="/pricing">pricing page</a>.</p>
+    </div>
+  </section>
+
+  <CtaBand heading="Let’s talk about your computer." text="Send a repair request. We’ll arrange pickup and take it from there." button="Request a Repair" />
+</BaseLayout>

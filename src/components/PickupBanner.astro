@@ -1,0 +1,13 @@
+---
+import { serviceArea, policies } from '../config/site';
+import Icon from './Icon.astro';
+---
+<aside class="pickup-banner" aria-label="Free pickup and delivery">
+  <span class="pickup-icon"><Icon name="truck" size={28} /></span>
+  <div>
+    <p class="pickup-title">Free local pickup and return delivery</p>
+    <p>
+      Within our London, Ontario service area (currently up to {serviceArea.radiusKm} km). Request a preferred pickup date and time when you book. {policies.appointmentNotice}
+    </p>
+  </div>
+</aside>

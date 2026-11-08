@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { BOOK_HREF } from '../config/site';
+---
+<BaseLayout title="Page not found" description="The page you were looking for doesn’t exist. Return to the homepage or book a computer repair in London, Ontario." path="/404" noindex>
+  <section class="section status-page">
+    <div class="container">
+      <p class="big" aria-hidden="true">404</p>
+      <h1 style="font-size:clamp(1.75rem,5vw,2.5rem)">That page doesn’t exist</h1>
+      <p class="muted">The link may be out of date. Try one of these instead.</p>
+      <div class="btn-row" style="justify-content:center">
+        <a class="btn btn-primary" href="/">Go to the homepage</a>
+        <a class="btn btn-ghost" href={BOOK_HREF}>Book a Repair</a>
+        <a class="btn btn-ghost" href="/pricing">View Pricing</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import PickupBanner from '../components/PickupBanner.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { business, repairs, money, standardDiagnostic, LABOUR_PRICE, KEYBOARD_PRICE, SCREEN_PRICE, MOTHERBOARD_PRICE, policies, BOOK_HREF } from '../config/site';
+
+const crumbs = [{ name: 'Pricing' }];
+---
+<BaseLayout
+  title={`Computer Repair Pricing London Ontario | ${business.name}`}
+  description={`Simple computer repair pricing in London, Ontario: ${money(standardDiagnostic.price)} diagnostic and labour from ${money(LABOUR_PRICE)} per repair. Parts quoted separately.`}
+  path="/pricing"
+  breadcrumbs={crumbs}
+>
+  <section class="page-hero">
+    <div class="container">
+      <Breadcrumbs items={crumbs} />
+      <h1>Simple, transparent pricing</h1>
+      <p class="lead">A {money(standardDiagnostic.price)} diagnostic and labour from {money(LABOUR_PRICE)} per repair. Parts, shipping and applicable taxes are additional.</p>
+      <a class="btn btn-primary btn-lg" href={BOOK_HREF}>Book a Repair</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <PickupBanner />
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0" aria-labelledby="rates-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="rates-title">Diagnostic and labour</h2>
+        <p>Every job starts with a diagnostic. If you go ahead, most repairs are one standard labour price. Keyboard, screen and motherboard repairs cost more.</p>
+      </div>
+      <div class="grid grid-2">
+        <div class="card">
+          <h3>Diagnostic</h3>
+          <p class="price-tag" style="font-size:2.4rem;line-height:1.1;color:var(--text)">{money(standardDiagnostic.price)}</p>
+          <p>{standardDiagnostic.note}</p>
+        </div>
+        <div class="card">
+          <h3>Labour, most repairs</h3>
+          <p class="price-tag" style="font-size:2.4rem;line-height:1.1;color:var(--text)">{money(LABOUR_PRICE)}</p>
+          <p>Keyboard replacement is {money(KEYBOARD_PRICE)}, screen replacement {money(SCREEN_PRICE)} and motherboard issues {money(MOTHERBOARD_PRICE)}. Parts, shipping and applicable taxes are quoted separately.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" aria-labelledby="repair-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="repair-title">Labour prices by repair</h2>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <caption class="sr-only">Repair labour prices</caption>
+          <thead><tr><th scope="col">Repair</th><th scope="col" class="num">Labour</th></tr></thead>
+          <tbody>
+            {repairs.map((r) => <tr><th scope="row">{r.name}</th><td class="num">{r.from ? 'From ' : ''}{money(r.price)}</td></tr>)}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container prose">
+      <h2>Before you book</h2>
+      <ul>
+        <li>Parts are quoted separately and itemized on your quotation.</li>
+        <li>Shipping, where parts need to be ordered, and applicable taxes are additional.</li>
+        <li>No work starts, and no extra charges are added, without your approval of the quotation.</li>
+        <li>If you decline the repair, only the diagnostic fee applies.</li>
+      </ul>
+      <div class="callout">
+        <p><strong>Data disclaimer.</strong> {policies.dataDisclaimer}</p>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand heading="Know what you’ll pay before we start." text="Request a repair and get a written quotation before any work begins." button="Request a Repair" />
+</BaseLayout>

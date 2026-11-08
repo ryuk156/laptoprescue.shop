@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { business } from '../config/site';
+
+const crumbs = [{ name: 'Privacy Policy' }];
+---
+<BaseLayout
+  title={`Privacy Policy | ${business.name}`}
+  description={`How ${business.name} collects, uses and protects the personal information you submit through the repair request form.`}
+  path="/privacy-policy"
+  breadcrumbs={crumbs}
+>
+  <section class="page-hero">
+    <div class="container">
+      <Breadcrumbs items={crumbs} />
+      <h1>Privacy Policy</h1>
+      <p class="lead">Last updated: {business.privacyLastUpdated}</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container prose">
+      <h2>Who we are</h2>
+      <p>{business.name} provides laptop and MacBook repair in {business.city}, {business.region}, {business.country}. This policy explains what personal information we collect through this website and how we handle it.</p>
+
+      <h2>What we collect</h2>
+      <p>When you submit the repair request form we collect the details you enter: your name, email address, phone number, postal code, device type, manufacturer and model, a description of the problem, your preferred pickup date and time, and any additional comments.</p>
+      <p>We do not ask for passwords, device login credentials or payment card details through this website. Please don’t include them in the form.</p>
+
+      <h2>Why we collect it</h2>
+      <ul>
+        <li>To respond to your request and arrange pickup, diagnosis and return of your device.</li>
+        <li>To confirm that your postal code is within our service area.</li>
+        <li>To provide quotations and carry out repairs you approve.</li>
+        <li>To protect the form against spam and abuse.</li>
+      </ul>
+      <p>We rely on your consent, which you give by ticking the consent box when you submit the form.</p>
+
+      <h2>Cookies and tracking</h2>
+      <p>This website does not use advertising or analytics cookies and does not load third-party tracking scripts.</p>
+
+      <h2>Who we share it with</h2>
+      <p>We don’t sell your information. The form is processed by a serverless function hosted on Cloudflare, and the request is delivered to us by an email delivery service. These providers handle your information only to deliver your request to us. Our hosting provider may also process technical data, such as IP addresses, in server logs and for security and rate limiting.</p>
+
+      <h2>How long we keep it</h2>
+      <p>We keep repair request details only as long as needed to handle your request and for any records we are required to keep. Details of requests that do not lead to a repair are deleted within a reasonable period.</p>
+
+      <h2>Your rights</h2>
+      <p>You may ask to see the personal information we hold about you, ask us to correct it, or ask us to delete it, and you may withdraw your consent at any time, subject to legal or contractual limits. {business.email ? <>Contact us at <a href={`mailto:${business.email}`}>{business.email}</a>.</> : <>Contact us through the <a href="/contact#book">contact form</a> and mark your message as a privacy request.</>}</p>
+
+      <h2>Security</h2>
+      <p>The website is served over HTTPS. Form submissions are validated on the server, protected against spam, and rate limited. We don’t store your submission in a database on this website.</p>
+
+      <h2>Changes to this policy</h2>
+      <p>We may update this policy from time to time. The “last updated” date above shows when it last changed.</p>
+    </div>
+  </section>
+</BaseLayout>

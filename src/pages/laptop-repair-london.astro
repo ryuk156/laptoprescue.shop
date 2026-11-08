@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import PickupBanner from '../components/PickupBanner.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { business, repairById, money, standardDiagnostic, policies, BOOK_HREF } from '../config/site';
+
+
+const crumbs = [{ name: 'Computer Repair London', href: '/computer-repair-london' }, { name: 'Laptop Repair' }];
+
+const blocks = [
+  { id: 'keyboard-replacement', repair: 'keyboard', h: 'Laptop keyboard replacement in London, Ontario',
+    p: 'Keys that stick, repeat or stop responding, or a keyboard hit by a spill, can usually be fixed by fitting a compatible replacement keyboard. On many models the keyboard is built into the top case, which can affect the work involved, so we confirm the model in your quotation.',
+    list: ['Sticky, missing or unresponsive keys', 'Keyboard damaged by liquid', 'Backlight not working'] },
+  { id: 'screen-replacement', repair: 'screen', h: 'Laptop screen replacement in London, Ontario',
+    p: 'Cracked glass, lines across the display, flickering or a dim picture are common signs a laptop screen needs replacing. We source a screen matching your model, fit it and test it before your laptop comes back.',
+    list: ['Cracked or shattered display', 'Lines, patches or flicker', 'Backlight problems (screen very dim)'] },
+  { id: 'battery-replacement', repair: 'battery', h: 'Laptop battery replacement in London, Ontario',
+    p: 'If your laptop only lasts minutes off the charger, shuts down suddenly or the battery has swollen, a new battery brings it back to portable use. Swollen batteries are a safety concern; stop using the laptop and book a repair.',
+    list: ['Short battery life', 'Sudden shutdowns when unplugged', 'Swollen battery or lifting trackpad'] },
+  { id: 'ssd-upgrades', repair: 'ssd', h: 'SSD upgrades in London, Ontario',
+    p: 'Swapping a mechanical hard drive for a solid-state drive is one of the most noticeable upgrades for an older laptop: faster start-up, quicker app launches and a more responsive system. We install the drive and can set up Windows on it.',
+    list: ['Slow start-up and loading', 'Failing or full hard drive', 'Fresh Windows install on the new drive'] },
+  { id: 'ram-upgrades', repair: 'ram', h: 'RAM upgrades',
+    p: 'More memory helps when you run several programs or many browser tabs at once. Not every laptop can take more RAM, since some models have memory soldered to the board, so we check your model first.',
+    list: ['Slow when multitasking', 'Frequent “out of memory” slowdowns', 'Model compatibility checked first'] },
+  { id: 'motherboard-issues', repair: 'motherboard', h: 'Motherboard issues',
+    p: 'A laptop that will not power on, will not charge or shuts down at random can have a fault on the motherboard. The diagnostic finds the cause first, and your quotation shows the motherboard labour and any parts before you decide.',
+    list: ['Will not turn on or charge', 'Random shutdowns or restarts', 'Damage after a spill or a drop'] },
+  { id: 'internal-cleaning', repair: 'cleaning', h: 'Laptop cleaning and thermal paste replacement',
+    p: 'Dust packs the fans and vents over time, and thermal paste dries out. The result is a laptop that runs hot, loud and slow. Internal cleaning clears the airflow; thermal paste replacement (a separate labour item) restores heat transfer from the processor.',
+    list: ['Loud fan or high temperatures', 'Throttling or shutting down under load', 'Thermal paste replacement available as an add-on'] },
+];
+---
+<BaseLayout
+  title={`Laptop Repair London Ontario | ${business.name}`}
+  description="Laptop repair in London, Ontario: keyboard, screen and battery replacement, SSD and RAM upgrades and cleaning. Free pickup and delivery, clear labour prices."
+  path="/laptop-repair-london"
+  breadcrumbs={crumbs}
+>
+  <section class="page-hero">
+    <div class="container">
+      <Breadcrumbs items={crumbs} />
+      <h1>Laptop repair in London, Ontario</h1>
+      <p class="lead">Broken screen, tired battery or a laptop that has gotten painfully slow? We pick it up, fix it and bring it back, with the price confirmed before any work starts.</p>
+      <div class="btn-row">
+        <a class="btn btn-primary btn-lg" href={BOOK_HREF}>Book a Laptop Repair</a>
+        <a class="btn btn-ghost btn-lg" href="/pricing">View Pricing</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <PickupBanner />
+      <div class="callout" style="margin-top:1.5rem">
+        <p><strong>Start with a {money(standardDiagnostic.price)} diagnostic.</strong> Prices below are labour only; parts, shipping and taxes are additional.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      {blocks.map((b) => {
+        const r = repairById(b.repair);
+        return (
+          <article class="service-block" id={b.id}>
+            <div>
+              <h2>{b.h}</h2>
+              <p class="price-tag"><span class="muted" style="font-weight:500;font-size:.85rem">Labour</span><br />{money(r.price)}</p>
+              <a class="link-arrow" href={BOOK_HREF}>Request this repair</a>
+            </div>
+            <div>
+              <p>{b.p}</p>
+              <ul class="check-list">{b.list.map((i) => <li>{i}</li>)}</ul>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container prose">
+      <h2>MacBooks and other brands</h2>
+      <p>We work on Windows laptops from common manufacturers. {policies.macbook} The diagnostic is the same {money(standardDiagnostic.price)}.</p>
+      <p>Looking for something else, such as a Windows reinstall? See our <a href="/computer-repair-london">computer repair overview</a>.</p>
+    </div>
+  </section>
+
+  <CtaBand heading="Get your laptop back to normal." text="Request a repair and choose a preferred pickup date. We’ll confirm the details with you." button="Request a Repair" />
+</BaseLayout>

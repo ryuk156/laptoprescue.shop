@@ -1,0 +1,93 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import PickupBanner from '../components/PickupBanner.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Icon from '../components/Icon.astro';
+import { business, money, MACBOOK_BATTERY_PRICE, MACBOOK_OTHER_PRICE, KEYBOARD_PRICE, SCREEN_PRICE, standardDiagnostic, policies, BOOK_HREF } from '../config/site';
+
+const crumbs = [{ name: 'Computer Repair London', href: '/computer-repair-london' }, { name: 'MacBook Repair' }];
+
+const batterySigns = [
+  'Battery drains quickly or the MacBook shuts down when unplugged',
+  'A “Service Battery” or similar battery warning',
+  'Battery swells, the trackpad lifts or the case bulges',
+  'The MacBook only works while plugged in',
+];
+const others = [
+  'MacBook screen replacement',
+  'MacBook keyboard replacement',
+  'Storage upgrades, where the model allows',
+  'Internal cleaning for heat and fan noise',
+  'Diagnosis of a MacBook that won’t start or charge',
+];
+---
+<BaseLayout
+  title={`MacBook Repair London Ontario | ${business.name}`}
+  description="MacBook battery replacement and other MacBook repairs in London, Ontario. Free local pickup and return delivery, clear labour prices and a quotation before any work."
+  path="/macbook-repair-london"
+  breadcrumbs={crumbs}
+>
+  <section class="page-hero">
+    <div class="container">
+      <Breadcrumbs items={crumbs} />
+      <h1>MacBook repair in London, Ontario</h1>
+      <p class="lead">We replace MacBook batteries and handle other MacBook repairs. We collect it, diagnose it, quote it and only start once you approve.</p>
+      <div class="btn-row">
+        <a class="btn btn-primary btn-lg" href={BOOK_HREF}>Book a MacBook Repair</a>
+        <a class="btn btn-ghost btn-lg" href="/pricing">View Pricing</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <PickupBanner />
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0" aria-labelledby="mac-battery">
+    <div class="container split">
+      <div>
+        <p class="eyebrow">Most requested</p>
+        <h2 id="mac-battery">MacBook battery replacement</h2>
+        <p class="price-tag" style="font-size:2.2rem;line-height:1.1">{money(MACBOOK_BATTERY_PRICE)} <small>labour, plus the battery</small></p>
+        <p class="muted">The battery price depends on your model and is shown on your quotation before you approve.</p>
+      </div>
+      <div class="prose">
+        <p>A tired MacBook battery is one of the most common reasons a MacBook stops being portable. A new battery restores it to going unplugged all day. Signs it’s time:</p>
+        <ul class="check-list">{batterySigns.map((i) => <li>{i}</li>)}</ul>
+        <div class="callout">
+          <p><strong>Swollen battery?</strong> Stop using and charging the MacBook and book a repair. A swollen battery is a safety risk and shouldn’t be pressed on or punctured.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" aria-labelledby="mac-other">
+    <div class="container split">
+      <div>
+        <h2 id="mac-other">Other MacBook repairs</h2>
+        <p class="muted">Other MacBook repairs start from {money(MACBOOK_OTHER_PRICE)} labour. MacBook screen replacement is {money(SCREEN_PRICE)} and keyboard replacement {money(KEYBOARD_PRICE)}, the same as other laptops. Parts, shipping and applicable taxes are quoted separately.</p>
+      </div>
+      <div>
+        <ul class="benefits">
+          {others.map((o) => (
+            <li><span class="tick"><Icon name="check" size={18} /></span><span><strong>{o}</strong></span></li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container prose">
+      <h2>What to expect for your model</h2>
+      <p>MacBooks differ a lot between models and years. Some parts are easy to swap; on others the memory or storage is built into the board and can’t be upgraded. Add your MacBook model (for example “MacBook Pro 13-inch, 2019”) to the repair request, and we confirm what is possible, which parts are needed and the total in your quotation.</p>
+      <p>The {money(standardDiagnostic.price)} diagnostic comes first, and nothing is repaired without your approval. {policies.dataDisclaimer}</p>
+      <p>Using a Windows laptop instead? See <a href="/laptop-repair-london">laptop repair</a>.</p>
+    </div>
+  </section>
+
+  <CtaBand heading="Get your MacBook back to full charge." text="Send a repair request with your MacBook model and a preferred pickup date." button="Request a Repair" />
+</BaseLayout>

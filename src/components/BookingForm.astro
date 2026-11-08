@@ -1,0 +1,244 @@
+---
+import { business, policies } from '../config/site';
+
+const deviceTypes = ['Laptop', 'MacBook'];
+const pickupTimes = ['Morning', 'Afternoon', 'Evening', 'No preference'];
+---
+<div class="form-card" id="book">
+  <h2>Request a repair</h2>
+  <div class="callout" style="margin-bottom:1.25rem"><p><strong>Back up your data first.</strong> {policies.dataDisclaimer}</p></div>
+  <p class="muted">Tell us about your device. We’ll reply to arrange pickup. Please don’t send passwords or device login details — we never need them to book.</p>
+
+  <form
+    id="repair-form"
+    method="post"
+    action={business.formEndpoint}
+    novalidate
+    data-endpoint={business.formEndpoint}
+  >
+    <div class="form-grid">
+      <div class="field">
+        <label for="f-name">Full name <span class="req" aria-hidden="true">*</span></label>
+        <input id="f-name" name="name" type="text" autocomplete="name" required maxlength="100" />
+        <p class="error" id="e-name"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-email">Email <span class="req" aria-hidden="true">*</span></label>
+        <input id="f-email" name="email" type="email" autocomplete="email" required maxlength="254" inputmode="email" />
+        <p class="error" id="e-email"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-phone">Phone number <span class="req" aria-hidden="true">*</span></label>
+        <input id="f-phone" name="phone" type="tel" autocomplete="tel" required maxlength="25" inputmode="tel" />
+        <p class="error" id="e-phone"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-postal">Postal code <span class="req" aria-hidden="true">*</span>
+          <span class="hint">So we can confirm pickup is available. Example: N6A 1A1</span>
+        </label>
+        <input id="f-postal" name="postalCode" type="text" autocomplete="postal-code" required maxlength="7" />
+        <p class="error" id="e-postalCode"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-device">Device type <span class="req" aria-hidden="true">*</span></label>
+        <select id="f-device" name="deviceType" required>
+          <option value="">Select…</option>
+          {deviceTypes.map((d) => <option value={d}>{d}</option>)}
+        </select>
+        <p class="error" id="e-deviceType"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-make">Manufacturer <span class="req" aria-hidden="true">*</span></label>
+        <input id="f-make" name="manufacturer" type="text" required maxlength="60" placeholder="e.g. Dell, HP, Lenovo, Apple" />
+        <p class="error" id="e-manufacturer"></p>
+      </div>
+
+      <div class="field full">
+        <label for="f-model">Model number
+          <span class="hint">Usually on a sticker under the laptop. Optional if you’re not sure.</span>
+        </label>
+        <input id="f-model" name="model" type="text" maxlength="80" />
+        <p class="error" id="e-model"></p>
+      </div>
+
+      <div class="field full">
+        <label for="f-problem">Problem description <span class="req" aria-hidden="true">*</span>
+          <span class="hint">What’s happening, and when did it start? You can also request a specific repair.</span>
+        </label>
+        <textarea id="f-problem" name="problem" required minlength="10" maxlength="2000"></textarea>
+        <p class="error" id="e-problem"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-date">Preferred pickup date <span class="req" aria-hidden="true">*</span></label>
+        <input id="f-date" name="pickupDate" type="date" required />
+        <p class="error" id="e-pickupDate"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-time">Preferred pickup time <span class="req" aria-hidden="true">*</span></label>
+        <select id="f-time" name="pickupTime" required>
+          <option value="">Select…</option>
+          {pickupTimes.map((t) => <option value={t}>{t}</option>)}
+        </select>
+        <p class="error" id="e-pickupTime"></p>
+      </div>
+
+      <p class="full muted small" style="margin:0">{policies.appointmentNotice}</p>
+
+      <div class="field full">
+        <label for="f-comments">Additional comments</label>
+        <textarea id="f-comments" name="comments" maxlength="1000"></textarea>
+        <p class="error" id="e-comments"></p>
+      </div>
+
+      <!-- Honeypot: hidden from people, tempting to bots. -->
+      <div class="hp" aria-hidden="true">
+        <label for="f-website">Leave this field empty</label>
+        <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+      <input type="hidden" name="ts" id="f-ts" value="" />
+
+      <div class="field full">
+        <div class="consent">
+          <input id="f-consent" name="consent" type="checkbox" value="yes" required />
+          <label for="f-consent">I agree to my details being used to respond to this request, as described in the <a href="/privacy-policy">Privacy Policy</a>, and I understand that the business is not responsible for any data on my device. <span class="req" aria-hidden="true">*</span></label>
+        </div>
+        <p class="error" id="e-consent"></p>
+      </div>
+
+      <div class="full">
+        <button class="btn btn-primary btn-lg" type="submit" id="f-submit">Request Repair</button>
+      </div>
+    </div>
+
+    <div id="form-status" class="form-status" role="status" aria-live="polite" tabindex="-1" hidden></div>
+  </form>
+</div>
+
+<script>
+  const form = document.getElementById('repair-form') as HTMLFormElement | null;
+  if (form) {
+    const status = document.getElementById('form-status') as HTMLElement;
+    const submit = document.getElementById('f-submit') as HTMLButtonElement;
+    const ts = document.getElementById('f-ts') as HTMLInputElement;
+    const dateInput = form.elements.namedItem('pickupDate') as HTMLInputElement;
+
+    // Earliest selectable pickup date = tomorrow (local time).
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    const pad = (n: number) => String(n).padStart(2, '0');
+    dateInput.min = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    ts.value = String(Date.now());
+
+    const POSTAL = /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i;
+    const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+    const fields: Record<string, (v: string, el: HTMLInputElement) => string> = {
+      name: (v) => (v.trim().length < 2 ? 'Please enter your full name.' : ''),
+      email: (v) => (EMAIL.test(v.trim()) ? '' : 'Please enter a valid email address.'),
+      phone: (v) => (v.replace(/\D/g, '').length >= 10 ? '' : 'Please enter a phone number with area code.'),
+      postalCode: (v) => (POSTAL.test(v.trim()) ? '' : 'Please enter a valid Canadian postal code, e.g. N6A 1A1.'),
+      deviceType: (v) => (v ? '' : 'Please choose a device type.'),
+      manufacturer: (v) => (v.trim() ? '' : 'Please enter the manufacturer.'),
+      problem: (v) => (v.trim().length < 10 ? 'Please describe the problem in at least 10 characters.' : ''),
+      pickupDate: (v) => (!v ? 'Please choose a preferred pickup date.' : v < dateInput.min ? 'Please choose a date from tomorrow onward.' : ''),
+      pickupTime: (v) => (v ? '' : 'Please choose a preferred time.'),
+      consent: (_v, el) => (el.checked ? '' : 'Please agree to the Privacy Policy to continue.'),
+    };
+
+    const setError = (name: string, msg: string) => {
+      const el = form.elements.namedItem(name) as HTMLInputElement | null;
+      const out = document.getElementById(`e-${name}`);
+      if (!el || !out) return;
+      out.textContent = msg;
+      if (msg) {
+        el.setAttribute('aria-invalid', 'true');
+        el.setAttribute('aria-describedby', out.id);
+      } else {
+        el.removeAttribute('aria-invalid');
+        el.removeAttribute('aria-describedby');
+      }
+    };
+
+    const validateField = (name: string) => {
+      const el = form.elements.namedItem(name) as HTMLInputElement;
+      const msg = fields[name](el.value, el);
+      setError(name, msg);
+      return msg;
+    };
+
+    for (const name of Object.keys(fields)) {
+      const el = form.elements.namedItem(name) as HTMLInputElement;
+      el.addEventListener('blur', () => validateField(name));
+      el.addEventListener('input', () => { if (el.getAttribute('aria-invalid')) validateField(name); });
+      el.addEventListener('change', () => { if (el.getAttribute('aria-invalid')) validateField(name); });
+    }
+
+    const show = (kind: 'success' | 'error' | 'info', text: string, moveFocus = true) => {
+      status.className = `form-status ${kind}`;
+      status.textContent = text;
+      status.hidden = false;
+      if (moveFocus) status.focus();
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      status.hidden = true;
+
+      const failing = Object.keys(fields).filter((n) => validateField(n));
+      if (failing.length) {
+        // Announce via the live region, but leave focus on the first invalid field.
+        show('error', `Please fix ${failing.length === 1 ? 'the highlighted field' : 'the highlighted fields'} and try again.`, false);
+        (form.elements.namedItem(failing[0]) as HTMLElement).focus();
+        return;
+      }
+
+      submit.disabled = true;
+      submit.textContent = 'Sending…';
+      try {
+        const data = Object.fromEntries(new FormData(form).entries());
+        const res = await fetch(form.dataset.endpoint || '/api/repair-request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(data),
+        });
+        const body = await res.json().catch(() => ({}));
+
+        if (res.ok && body.ok) {
+          form.reset();
+          ts.value = String(Date.now());
+          show('success', body.message || 'Thank you — your repair request was sent. We’ll be in touch to confirm pickup.');
+          return;
+        }
+        if (res.status === 422 && body.errors) {
+          for (const [name, msg] of Object.entries(body.errors as Record<string, string>)) setError(name, msg);
+          show('error', 'Some details need fixing. Please check the highlighted fields.');
+        } else if (res.status === 429) {
+          show('error', 'Too many requests from your connection. Please wait a little while and try again.');
+        } else if (res.status === 503) {
+          show('error', 'Online booking isn’t available right now, so your request was NOT sent. Please try again later.');
+        } else {
+          show('error', 'Something went wrong and your request was NOT sent. Please try again in a moment.');
+        }
+      } catch {
+        show('error', 'We couldn’t reach the server, so your request was NOT sent. Check your connection and try again.');
+      } finally {
+        submit.disabled = false;
+        submit.textContent = 'Request Repair';
+      }
+    });
+
+    // Result of a no-JS form post (server redirects back with ?status=...).
+    const q = new URLSearchParams(location.search).get('status');
+    if (q === 'success') show('success', 'Thank you — your repair request was sent. We’ll be in touch to confirm pickup.');
+    else if (q === 'error') show('error', 'Your request was NOT sent. Please check the details and try again.');
+    else if (q === 'unavailable') show('error', 'Online booking isn’t available right now, so your request was NOT sent. Please try again later.');
+    else if (q === 'ratelimit') show('error', 'Too many requests from your connection. Please wait a little while and try again.');
+  }
+</script>

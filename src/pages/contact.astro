@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import BookingForm from '../components/BookingForm.astro';
+import { business, serviceArea, policies, money, standardDiagnostic } from '../config/site';
+
+const crumbs = [{ name: 'Contact' }];
+---
+<BaseLayout
+  title={`Book a Computer Repair in London, Ontario | ${business.name}`}
+  description="Request a laptop or MacBook repair in London, Ontario. Choose a preferred pickup date and time; free local pickup and return delivery within the service area."
+  path="/contact"
+  breadcrumbs={crumbs}
+>
+  <section class="page-hero">
+    <div class="container">
+      <Breadcrumbs items={crumbs} />
+      <h1>Book a repair</h1>
+      <p class="lead">Fill in the form and we’ll reply to confirm pickup. Free local pickup and return delivery within our London service area.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container contact-grid">
+      <BookingForm />
+
+      <aside class="side-card" aria-labelledby="next-title">
+        <h2 id="next-title">What happens next</h2>
+        <ol>
+          <li>We review your request and contact you to confirm pickup.</li>
+          <li>We collect your device and run the {money(standardDiagnostic.price)} standard diagnostic.</li>
+          <li>You receive a quotation and decide whether to go ahead.</li>
+          <li>If you approve, we repair, test and deliver it back.</li>
+        </ol>
+        <h3>Service area</h3>
+        <p>{business.city}, {business.region}. Free pickup and delivery within {serviceArea.radiusKm} km. {policies.appointmentNotice}</p>
+        {(business.email || business.phone) && (
+          <>
+            <h3>Other ways to reach us</h3>
+            <ul>
+              {business.email && <li><a href={`mailto:${business.email}`}>{business.email}</a></li>}
+              {business.phone && <li><a href={`tel:${business.phone.replace(/[^+\d]/g, '')}`}>{business.phone}</a></li>}
+            </ul>
+          </>
+        )}
+        <p class="small muted">We never need your passwords to book a repair. Please don’t include them.</p>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>

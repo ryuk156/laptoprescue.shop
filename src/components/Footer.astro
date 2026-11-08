@@ -1,0 +1,41 @@
+---
+import { business, nav, footerServices, serviceArea, policies } from '../config/site';
+const year = new Date().getFullYear(); // generated at build time
+---
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div>
+      <p class="footer-brand">{business.name}</p>
+      <p class="footer-muted">
+        Laptop and MacBook repair serving {business.city}, {business.region}. Free local pickup and return delivery within {serviceArea.radiusKm} km.
+      </p>
+    </div>
+    <nav aria-label="Footer navigation">
+      <h2 class="footer-title">Navigation</h2>
+      <ul>
+        <li><a href="/">Home</a></li>
+        {nav.filter((n) => n.label !== 'Services').map((n) => <li><a href={n.href}>{n.label}</a></li>)}
+        <li><a href="/privacy-policy">Privacy Policy</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Services">
+      <h2 class="footer-title">Services</h2>
+      <ul>
+        {footerServices.map((s) => <li><a href={s.href}>{s.label}</a></li>)}
+      </ul>
+    </nav>
+    <div>
+      <h2 class="footer-title">Contact</h2>
+      <ul>
+        <li><a href="/contact#book">Request a repair online</a></li>
+        {business.email && <li><a href={`mailto:${business.email}`}>{business.email}</a></li>}
+        {business.phone && <li><a href={`tel:${business.phone.replace(/[^+\d]/g, '')}`}>{business.phone}</a></li>}
+        <li class="footer-muted">Service area: {business.city}, {business.region}</li>
+      </ul>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <p class="footer-disclaimer">{policies.dataDisclaimer}</p>
+    <p>© {year} {business.name}. All rights reserved.</p>
+  </div>
+</footer>

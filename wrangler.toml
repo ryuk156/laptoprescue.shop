@@ -1,0 +1,14 @@
+name = "london-computer-repair"
+pages_build_output_dir = "./dist"
+compatibility_date = "2026-11-01"
+
+# Optional, durable rate limiting for the form. Create the namespace once:
+#   npx wrangler kv namespace create RATE_LIMIT
+# then paste the returned id below and uncomment.
+# [[kv_namespaces]]
+# binding = "RATE_LIMIT"
+# id = "REPLACE_WITH_KV_NAMESPACE_ID"
+
+# Non-secret variables. Secrets (RESEND_API_KEY) go in the Cloudflare dashboard, never in this file.
+[vars]
+BUSINESS_NAME = "laptoprescue.shop"
