@@ -4,7 +4,7 @@ import sys
 from PIL import Image, ImageDraw, ImageFont
 name = sys.argv[1] if len(sys.argv) > 1 else "laptoprescue.shop"
 W, H = 1200, 630
-CHAR, TAN, BG = (71, 70, 66), (195, 170, 131), (245, 243, 239)
+CHAR, TAN, BG = (23, 43, 61), (183, 243, 107), (245, 247, 248)
 img = Image.new("RGB", (W, H), BG)
 d = ImageDraw.Draw(img)
 def font(size, bold=True):
@@ -18,10 +18,10 @@ lw = 380; lh = round(logo.height * lw / logo.width)
 logo = logo.resize((lw, lh), Image.LANCZOS)
 img.paste(logo, (90, (H - lh) // 2), logo)
 x = 520
-d.rectangle((x, 205, x + 90, 211), fill=TAN)
+d.rectangle((x, 205, x + 90, 213), fill=TAN)
 d.text((x, 240), name, font=font(60), fill=CHAR)
 d.text((x, 332), "Laptop & MacBook repair", font=font(40, False), fill=CHAR)
 d.text((x, 392), "London, Ontario", font=font(40, False), fill=CHAR)
-d.text((x, 470), "Free pickup & delivery  \u2022  $29.99 diagnostics", font=font(26, False), fill=(110, 108, 100))
+d.text((x, 470), "Free pickup & delivery  \u2022  $29.99 diagnostics", font=font(26, False), fill=(85, 101, 122))
 img.save("public/og-image.png", optimize=True)
 print("wrote public/og-image.png")
